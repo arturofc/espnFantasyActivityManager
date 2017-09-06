@@ -1,0 +1,16 @@
+{
+  "name": "espnfantasyactivitymanager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Arturo",
+  "license": "ISC",
+  "dependencies": {
+    "email-templates": "^2.7.1",
+    "handlebars": "^4.0.10",
+    "nodemailer": "^4.1.0"
+  }
+}

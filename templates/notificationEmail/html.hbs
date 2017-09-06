@@ -1,0 +1,22 @@
+<h1>{{length}} new notification(s) in your league!</h1>
+
+<table>
+  <tr>
+    <td><strong>Time</strong></td>
+    <td><strong>Type</strong></td>
+    <td><strong>Detail</strong></td>
+    <td><strong>Action</strong></td>
+  </tr>
+  {{#each notifications}}
+    <tr>
+      <td>{{time}}</td>
+      <td>{{type}}</td>
+      <td>{{detail}}</td>
+      <td>
+        {{#each action}}
+          <a href={{href}}>{{text}}</a>
+        {{/each}}
+      </td>
+    </tr>
+  {{/each}}
+</table>
