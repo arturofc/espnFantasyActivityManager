@@ -23,9 +23,10 @@ var transporter = nodemailer.createTransport({
 var templateDir = path.join(__dirname, 'templates', 'notificationEmail');
 var template = new EmailTemplate(templateDir);
 
-//spawn child process to run casperjs and scrape espn for new league activity notifications
+// spawn child process to run casperjs and scrape espn for new league activity notifications
 var casperjs = spawn('casperjs', ['leagueActivity.js']);
 
+// log console output from leagueActivity script
 casperjs.stdout.on('data', function (data) {
   console.log('leagueActivity: ' + data);
 });
@@ -41,7 +42,11 @@ casperjs.on('close', function (signal) {
         console.log('new notifications log has been read and cleared');
       });
       // send notification(s) as JSON array
-      sendNotification(JSON.parse(data));
+      try {
+        sendNotification(JSON.parse(data));
+      } catch(error) {
+        console.log(error);
+      }
     }
   }
 });
@@ -55,9 +60,9 @@ function sendNotification(notifications) {
   };
 
   // Render and send email
-  template.render(wrapper, function (err, result) {
-    if (err) {
-      return console.error(err)
+  template.render(wrapper, function (error, result) {
+    if (error) {
+      throw new Error(error);
     }
 
     // setup email data
@@ -72,7 +77,7 @@ function sendNotification(notifications) {
       // send mail
       transporter.sendMail(mailOptions, (error, info) => {
           if (error) {
-              return console.log(error);
+            throw new Error(error);
           }
           console.log('Notification email sent: %s', info.messageId);
       });
