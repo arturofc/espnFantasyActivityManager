@@ -36,20 +36,19 @@ casperjs.on('close', function (signal) {
     // check the new notifications log
     var newNotifsLog = './logs/newNotifications.json';
     var data = fs.readFileSync(newNotifsLog);
-    fs.truncate(newNotifsLog, function() {
-      console.log('new notifications log has been read and cleared');
-    });
-    notifications = JSON.parse(data);
-    if(notifications.length > 0){
-      // send notification(s) as email
-      sendNotification(notifications);
+    if(data.length > 0){
+      fs.truncate(newNotifsLog, function() {
+        console.log('new notifications log has been read and cleared');
+      });
+      // send notification(s) as JSON array
+      sendNotification(JSON.parse(data));
     }
   }
 });
 
 
 function sendNotification(notifications) {
-  // wrap notifications array in object to send for handlebars template engine
+  // wrap notifications array in object to render in handlebars template engine
   var wrapper = {
     notifications: notifications,
     length: notifications.length
