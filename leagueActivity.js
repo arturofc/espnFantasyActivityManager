@@ -1,7 +1,5 @@
-var casper = require('casper').create();
-var fs = require('fs');
-
-// app configuration file
+const casper = require('casper').create();
+const fs = require('fs');
 const config = require('./config'),
       espnLeagueUrl = 'http://games.espn.com/ffl/leagueoffice?leagueId=' + config.espnLeagueId + '&seasonId=2017';
 
