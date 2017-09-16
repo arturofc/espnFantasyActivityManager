@@ -19,6 +19,9 @@ var transporter = nodemailer.createTransport({
   }
 });
 
+// create or truncate(clear) the log for new notifications
+fs.closeSync(fs.openSync('./logs/newNotifications.json', 'w'));
+
 // email-templates configuration
 var templateDir = path.join(__dirname, 'templates', 'notificationEmail');
 var template = new EmailTemplate(templateDir);
@@ -65,13 +68,13 @@ function sendNotification(notifications) {
       throw new Error(error);
     }
 
-    // setup email data
+      // setup email data
       let mailOptions = {
-          from: config.sendFrom,
-          to: config.sendTo.toString(),
-          subject: result.subject,
-          text: result.text,
-          html: result.html
+        from: config.sendFrom,
+        to: config.sendTo.toString(),
+        subject: result.subject,
+        text: result.text,
+        html: result.html
       };
 
       // send mail
