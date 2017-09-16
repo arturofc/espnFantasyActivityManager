@@ -1,7 +1,7 @@
 const casper = require('casper').create();
 const fs = require('fs');
 const config = require('./config'),
-      espnLeagueUrl = 'http://games.espn.com/ffl/leagueoffice?leagueId=' + config.espnLeagueId + '&seasonId=2017';
+      espnLeagueUrl = 'http://games.espn.com/ffl/leagueoffice?leagueId=' + config.espnLeagueId;
 
 casper.start(espnLeagueUrl)
       .waitForSelector('div[id=disneyid-wrapper][class=state-active]',
