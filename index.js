@@ -1,10 +1,12 @@
 /** Node application driver **/
 const spawn = require('child_process').spawn;
 const fs = require('fs');
+const path = require('path'),
+      newNotifsLog = path.join(__dirname, 'logs', 'newNotifications.json');
 const mailer = require('./mailer');
 
 // create or truncate(clear) the log for new notifications
-fs.closeSync(fs.openSync('./logs/newNotifications.json', 'w'));
+fs.closeSync(fs.openSync(newNotifsLog, 'w'));
 
 // spawn child process to run casperjs and scrape espn for new league activity notifications
 const casperjs = spawn('casperjs', ['leagueActivity.js']);
@@ -18,7 +20,6 @@ casperjs.stdout.on('data', function (data) {
 casperjs.on('close', function (signal) {
   if(signal == 0) {
     // check the new notifications log
-    var newNotifsLog = './logs/newNotifications.json';
     var data = fs.readFileSync(newNotifsLog);
     if(data.length > 0){
       // send notification(s) as JSON array
