@@ -2,6 +2,9 @@ const casper = require('casper').create();
 const fs = require('fs');
 const config = require('./config'),
       espnLeagueUrl = 'http://games.espn.com/ffl/leagueoffice?leagueId=' + config.espnLeagueId;
+// Paths to json log files
+const leagueActivityLog = './logs/leagueActivityLog.json',
+      newNotifsLog = './logs/newNotifications.json';
 
 casper.start(espnLeagueUrl)
       .waitForSelector('div[id=disneyid-wrapper][class=state-active]',
@@ -31,9 +34,8 @@ casper.start(espnLeagueUrl)
       }, 10000)
       .waitForSelector('table .tableBody',
           function() {
-            var path = './logs/leagueActivityLog.json';
-            if(!fs.exists(path)) {
-              fs.touch(path); // create the league activity log if it doesn't exist
+            if(!fs.exists(leagueActivityLog)) {
+              fs.touch(leagueActivityLog); // create the league activity log if it doesn't exist
 
               // get the full table of league activity notifications
               var notifications = this.evaluate(function() {
@@ -66,11 +68,11 @@ casper.start(espnLeagueUrl)
 
               // dump the league activity into log file
               var data = JSON.stringify(notifications, null, 2);
-              fs.write(path, data, 'w');
+              fs.write(leagueActivityLog, data, 'w');
 
             } else {
               this.echo('checking for new notifications...');
-              var data = fs.read(path);
+              var data = fs.read(leagueActivityLog);
               notifications = JSON.parse(data);
               // compare number of rows in current table to number of notification objects in log file
               var newNotifications = this.evaluate(function(oldLength) {
@@ -107,19 +109,19 @@ casper.start(espnLeagueUrl)
                 return newNotifs;
               }, notifications.length);
 
-              fs.touch('./logs/newNotifications.json');
+              fs.touch(newNotifsLog);
               if(newNotifications.length > 0) {
                 this.echo(newNotifications.length + ' new notifications in league activity');
-                // create a new notifications log for nodemailer
+                // create a new notifications log to check after casper process completes
                 var newData = JSON.stringify(newNotifications, null, 2);
-                fs.write('./logs/newNotifications.json', newData, 'w');
+                fs.write(newNotifsLog, newData, 'w');
 
                 // update the overall league activity log
                 for(i = 0; i < newNotifications.length; i++) {
                   notifications.unshift(newNotifications[i]);
                 }
                 var data = JSON.stringify(notifications, null, 2);
-                fs.write(path, data, 'w');
+                fs.write(leagueActivityLog, data, 'w');
               }else{
                 this.echo('no new league notifications');
               }
